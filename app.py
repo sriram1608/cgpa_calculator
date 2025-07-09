@@ -9,15 +9,24 @@ DATABASE = 'database.db'
 
 # Initialize DB and default admin
 def init_db():
-    if not os.path.exists(DATABASE):
-        with open('schema.sql', 'r') as f:
-            schema = f.read()
-        conn = sqlite3.connect(DATABASE)
-        conn.executescript(schema)
-        conn.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ("admin", "admin@123", "admin"))
-        conn.commit()
-        conn.close()
-        print("Database initialized.")
+    conn = sqlite3.connect('database.db')
+    conn.execute('''CREATE TABLE IF NOT EXISTS users (
+        email TEXT PRIMARY KEY,
+        name TEXT,
+        password TEXT,
+        department TEXT,
+        graduation_year TEXT,
+        role TEXT
+    )''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS marks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        enrollment TEXT,
+        semester INTEGER,
+        credits INTEGER,
+        grade_point REAL
+    )''')
+    conn.commit()
+    conn.close()
 
 # Connect to SQLite
 def get_db_connection():
@@ -30,53 +39,48 @@ def index():
     return redirect('/login')
 
 # -------------------- LOGIN --------------------
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        uname = request.form['username']
-        pwd = request.form['password']
-        conn = get_db_connection()
-        user = conn.execute('SELECT * FROM users WHERE username = ? AND password = ?', (uname, pwd)).fetchone()
-        conn.close()
-        if user:
-            session['username'] = user['username']
-            session['role'] = user['role']
-            if user['role'] == 'admin':
-                return redirect('/admin')
-            else:
-                return redirect('/student')
-        else:
-            flash("Incorrect username or password.")
-            return render_template('login.html')  # re-render with message
-    return render_template('login.html')
+    email = request.form['email']
+    password = request.form['password']
+
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
+    user = cur.fetchone()
+    conn.close()
+
+    if user:
+        session['user'] = user[0]  # email
+        session['role'] = user[5]
+        return redirect('/dashboard')
+    return render_template('login.html', error="Incorrect credentials")
 
 
 # -------------------- SIGNUP --------------------
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        email = request.form['email']
         name = request.form['name']
-        enrollment = request.form['enrollment']
+        password = request.form['password']
+        department = request.form['department']
+        graduation = request.form['graduation']
 
-        # Password strength check
-        if (len(password) < 8 or
-            not re.search(r"[A-Z]", password) or
-            not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password)):
-            flash("Password must be at least 8 characters long, contain a capital letter and a special character.")
-            return render_template('signup.html')
+        # Validate password strength
+        if not re.match(r'^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$', password):
+            return "Password must be 8+ characters, with 1 capital and 1 special character"
 
+        conn = sqlite3.connect('database.db')
         try:
-            conn = get_db_connection()
-            conn.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", (username, password, 'student'))
-            conn.execute("INSERT INTO students (enrollment, name, username) VALUES (?, ?, ?)", (enrollment, name, username))
+            conn.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)",
+                         (email, name, password, department, graduation, 'student'))
             conn.commit()
-            conn.close()
-            return redirect('/login')
         except sqlite3.IntegrityError:
-            flash("Username or Enrollment already exists.")
-            return render_template('signup.html')
+            return "Email already registered"
+        finally:
+            conn.close()
+        return redirect('/')
     return render_template('signup.html')
 
 # -------------------- LOGOUT --------------------

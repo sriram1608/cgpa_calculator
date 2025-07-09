@@ -2,12 +2,14 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS students;
 DROP TABLE IF EXISTS marks;
 
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    role TEXT NOT NULL
-);
+CREATE TABLE IF NOT EXISTS users (
+    email TEXT PRIMARY KEY,
+    name TEXT,
+    password TEXT,
+    department TEXT,
+    graduation_year TEXT,
+    role TEXT
+)
 
 CREATE TABLE students (
     enrollment TEXT PRIMARY KEY,
