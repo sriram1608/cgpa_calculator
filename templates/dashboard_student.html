@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>Student Dashboard</h2>
+    <a href="/logout">Logout</a>
+
+    <form action="/student/enter" method="get">
+        <button type="submit">Enter Grades</button>
+    </form>
+
+    {% if sgpa_list %}
+        <h3>SGPA by Semester</h3>
+        <table border="1" cellpadding="10" width="100%">
+            <tr><th>Semester</th><th>SGPA</th></tr>
+            {% for sem, sgpa in sgpa_list %}
+            <tr><td>{{ sem }}</td><td>{{ sgpa }}</td></tr>
+            {% endfor %}
+        </table>
+
+        <h3>Total CGPA: {{ cgpa }}</h3>
+        <h4>CGPA %: {{ cgpa_percent }}%</h4>
+    {% endif %}
+</div>
+</body>
+</html>

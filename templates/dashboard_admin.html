@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h2, h3, h4 {
+            margin-bottom: 10px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+        input, button {
+            padding: 8px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        th, td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: center;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Admin Dashboard</h2>
+    <a href="/logout">Logout</a>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li class="success">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <!-- View Student Marks -->
+    <h3>View Student Marks</h3>
+    <form method="POST" action="/admin/view">
+        <input type="text" name="enrollment" placeholder="Enter Enrollment Number" required>
+        <button type="submit">View Marks</button>
+    </form>
+
+    <!-- Display SGPA/CGPA if available -->
+    {% if sgpa_list %}
+        <h3>Student: {{ student_name }}</h3>
+        <table>
+            <tr>
+                <th>Semester</th>
+                <th>SGPA</th>
+            </tr>
+            {% for sem, sgpa in sgpa_list %}
+                <tr>
+                    <td>{{ sem }}</td>
+                    <td>{{ sgpa }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <h4>Total CGPA: {{ cgpa }}</h4>
+        <h4>CGPA Percentage: {{ cgpa_percent }}%</h4>
+    {% endif %}
+
+    <hr>
+
+    <!-- Delete Student -->
+    <h3>Delete Student Record</h3>
+    <form method="POST" action="/admin/delete" onsubmit="return confirm('Are you sure you want to delete this student?');">
+        <input type="text" name="enrollment" placeholder="Enter Enrollment Number to Delete" required>
+        <button type="submit" style="background-color: red; color: white;">Delete Student</button>
+    </form>
+</div>
+</body>
+</html>
