@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Grades</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        function generateFields() {
+            const count = document.getElementById("subject_count").value;
+            const container = document.getElementById("subjects");
+            container.innerHTML = "";
+            for (let i = 1; i <= count; i++) {
+                container.innerHTML += `
+                    <h4>Subject ${i}</h4>
+                    <input type="number" name="credits${i}" placeholder="Credits" required>
+                    <input type="number" name="gp${i}" placeholder="Grade Point (0-10)" min="0" max="10" required>
+                    <hr>
+                `;
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <h2>Enter Grades (Manual Input)</h2>
+    <form method="post">
+        <input type="number" name="semester" placeholder="Semester (1-8)" required min="1" max="8">
+        <input type="number" id="subject_count" name="subject_count" placeholder="Number of Subjects" required oninput="generateFields()">
+        <div id="subjects"></div>
+        <button type="submit">Submit</button>
+    </form>
+    <a href="/student">Back to Dashboard</a>
+</div>
+</body>
+</html>
