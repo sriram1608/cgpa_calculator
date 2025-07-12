@@ -3,27 +3,148 @@
 <head>
     <title>Student Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        h3, h4 {
+            color: #007bff;
+            margin-top: 25px;
+        }
+        .logout-link {
+            float: right;
+            color: #dc3545;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            border: 2px solid #dc3545;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .logout-link:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        .enter-grades-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+        }
+        .enter-grades-btn:hover {
+            background-color: #218838;
+        }
+        .enter-grades-btn[style*="background-color: #ffc107"]:hover {
+            background-color: #e0a800 !important;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .cgpa-display {
+            background-color: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .cgpa-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .cgpa-percentage {
+            font-size: 18px;
+            color: #28a745;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <h2>Student Dashboard</h2>
-    <a href="/logout">Logout</a>
+    <a href="/logout" class="logout-link">Logout</a>
+    <div style="clear: both;"></div>
 
-    <form action="/student/enter" method="get">
-        <button type="submit">Enter Grades</button>
-    </form>
+    <div style="display: flex; gap: 15px; margin: 20px 0;">
+        <form action="/student/enter" method="get" style="flex: 1;">
+            <button type="submit" class="enter-grades-btn">Enter Grades</button>
+        </form>
+        <form action="/student/edit" method="get" style="flex: 1;">
+            <button type="submit" class="enter-grades-btn" style="background-color: #ffc107; color: #212529;">
+                Edit Marks
+            </button>
+        </form>
+    </div>
 
     {% if sgpa_list %}
         <h3>SGPA by Semester</h3>
-        <table border="1" cellpadding="10" width="100%">
-            <tr><th>Semester</th><th>SGPA</th></tr>
-            {% for sem, sgpa in sgpa_list %}
-            <tr><td>{{ sem }}</td><td>{{ sgpa }}</td></tr>
-            {% endfor %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Semester</th>
+                    <th>SGPA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sem, sgpa in sgpa_list %}
+                <tr>
+                    <td>{{ sem }}</td>
+                    <td>{{ sgpa }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
 
-        <h3>Total CGPA: {{ cgpa }}</h3>
-        <h4>CGPA %: {{ cgpa_percent }}%</h4>
+        <div class="cgpa-display">
+            <h3>Academic Performance (Semesters 1-8)</h3>
+            <div class="cgpa-value">CGPA: {{ cgpa }}</div>
+            <div class="cgpa-percentage">Percentage: {{ cgpa_percent }}%</div>
+            <div style="font-size: 12px; color: #666; margin-top: 10px; font-style: italic;">
+                Formula: CGPA = Σ(C × GP) / Σ C
+            </div>
+        </div>
     {% endif %}
 </div>
 </body>

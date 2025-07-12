@@ -1,28 +1,22 @@
+-- Drop old tables if needed (optional for development/reset)
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS students;
 DROP TABLE IF EXISTS marks;
 
+-- Users table: stores student and admin credentials
 CREATE TABLE IF NOT EXISTS users (
     email TEXT PRIMARY KEY,
-    name TEXT,
-    password TEXT,
-    department TEXT,
-    graduation_year TEXT,
-    role TEXT
-)
-
-CREATE TABLE students (
-    enrollment TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    username TEXT NOT NULL,
-    FOREIGN KEY (username) REFERENCES users(username)
+    password TEXT NOT NULL,
+    department TEXT NOT NULL,
+    graduation_year TEXT NOT NULL,
+    role TEXT NOT NULL  -- 'student' or 'admin'
 );
 
-CREATE TABLE marks (
+-- Marks table: stores semester-wise marks per student
+CREATE TABLE IF NOT EXISTS marks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    enrollment TEXT NOT NULL,
+    enrollment TEXT NOT NULL,      -- student's email
     semester INTEGER NOT NULL,
     credits INTEGER NOT NULL,
-    grade_point INTEGER NOT NULL,
-    FOREIGN KEY (enrollment) REFERENCES students(enrollment)
+    grade_point REAL NOT NULL
 );

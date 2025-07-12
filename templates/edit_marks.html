@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Marks</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #007bff;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .marks-table th, .marks-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        .marks-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .marks-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .marks-table tr:hover {
+            background-color: #e8f4f8;
+        }
+        .edit-form {
+            display: none;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .edit-form input {
+            width: 80px;
+            padding: 8px;
+            margin: 0 5px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .edit-form input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0 2px;
+            transition: background-color 0.3s;
+        }
+        .btn-edit {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .btn-edit:hover {
+            background-color: #e0a800;
+        }
+        .btn-save {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-save:hover {
+            background-color: #218838;
+        }
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #545b62;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        .no-marks {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .semester-group {
+            margin-bottom: 30px;
+        }
+        .semester-header {
+            background-color: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #495057;
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+    
+    <h2>📝 Edit Your Marks</h2>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-success">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    {% if marks %}
+        {% set current_semester = None %}
+        {% for mark in marks %}
+            {% if mark[1] != current_semester %}
+                {% if current_semester is not none %}
+                    </table>
+                    </div>
+                {% endif %}
+                {% set current_semester = mark[1] %}
+                <div class="semester-group">
+                    <div class="semester-header">Semester {{ mark[1] }}</div>
+                    <table class="marks-table">
+                        <thead>
+                            <tr>
+                                <th>Subject Code</th>
+                                <th>Credits</th>
+                                <th>Grade Point</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            {% endif %}
+            
+            <tr id="row-{{ mark[0] }}">
+                <td id="subject-code-{{ mark[0] }}">{{ mark[2] }}</td>
+                <td id="credits-{{ mark[0] }}">{{ mark[3] }}</td>
+                <td id="grade-{{ mark[0] }}">{{ mark[4] }}</td>
+                <td>
+                    <button class="btn btn-edit" onclick="editMark({{ mark[0] }}, '{{ mark[2] }}', {{ mark[3] }}, {{ mark[4] }})">
+                        ✏️ Edit
+                    </button>
+                    <form style="display: inline;" method="POST" action="/student/delete_mark"
+                          onsubmit="return confirm('Are you sure you want to delete this mark?')">
+                        <input type="hidden" name="mark_id" value="{{ mark[0] }}">
+                        <button type="submit" class="btn btn-delete">🗑️ Delete</button>
+                    </form>
+                </td>
+            </tr>
+
+            <!-- Edit Form Row (Hidden by default) -->
+            <tr id="edit-{{ mark[0] }}" class="edit-form" style="display: none;">
+                <td colspan="4">
+                    <form method="POST" style="text-align: center;">
+                        <input type="hidden" name="mark_id" value="{{ mark[0] }}">
+                        <label>Subject Code: </label>
+                        <input type="text" name="subject_code" id="edit-subject-code-{{ mark[0] }}"
+                               maxlength="10" required style="text-transform: uppercase;">
+                        <label>Credits: </label>
+                        <input type="number" name="credits" id="edit-credits-{{ mark[0] }}"
+                               min="1" max="10" required>
+                        <label>Grade Point: </label>
+                        <input type="number" name="grade_point" id="edit-grade-{{ mark[0] }}"
+                               min="0" max="10" step="0.1" required>
+                        <button type="submit" class="btn btn-save">💾 Save</button>
+                        <button type="button" class="btn btn-cancel" onclick="cancelEdit({{ mark[0] }})">
+                            ❌ Cancel
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        
+        {% if current_semester is not none %}
+            </tbody>
+            </table>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="no-marks">
+            <h3>No marks found</h3>
+            <p>You haven't entered any marks yet. <a href="/student/enter">Enter marks now</a></p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function editMark(markId, currentSubjectCode, currentCredits, currentGrade) {
+        // Hide the display row and show the edit form
+        document.getElementById('row-' + markId).style.display = 'none';
+        document.getElementById('edit-' + markId).style.display = 'table-row';
+
+        // Populate the edit form with current values
+        document.getElementById('edit-subject-code-' + markId).value = currentSubjectCode;
+        document.getElementById('edit-credits-' + markId).value = currentCredits;
+        document.getElementById('edit-grade-' + markId).value = currentGrade;
+    }
+    
+    function cancelEdit(markId) {
+        // Hide the edit form and show the display row
+        document.getElementById('edit-' + markId).style.display = 'none';
+        document.getElementById('row-' + markId).style.display = 'table-row';
+    }
+</script>
+</body>
+</html>

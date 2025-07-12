@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Marks</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #007bff;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .grade-excellent {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .grade-good {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .grade-average {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+        .grade-poor {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Student Academic Records</h2>
+    <a href="/dashboard" class="back-link">Back to Dashboard</a>
+
+    {% if student_info %}
+        <div style="background-color: #e7f3ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #007bff;">
+            <h3 style="margin-top: 0; color: #007bff;">Student Information</h3>
+            <p><strong>Name:</strong> {{ student_info[0] }}</p>
+            <p><strong>Department:</strong> {{ student_info[1] }}</p>
+            <p><strong>Graduation Year:</strong> {{ student_info[2] }}</p>
+        </div>
+    {% endif %}
+    
+    {% if sgpa_list %}
+        <h3 style="color: #007bff; margin-top: 25px;">SGPA by Semester</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Semester</th>
+                    <th>SGPA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for semester, sgpa in sgpa_list %}
+                <tr>
+                    <td>{{ semester }}</td>
+                    <td>
+                        {% if sgpa >= 9.0 %}
+                            <span class="grade-excellent">{{ sgpa }}</span>
+                        {% elif sgpa >= 7.0 %}
+                            <span class="grade-good">{{ sgpa }}</span>
+                        {% elif sgpa >= 5.0 %}
+                            <span class="grade-average">{{ sgpa }}</span>
+                        {% else %}
+                            <span class="grade-poor">{{ sgpa }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="background-color: #e7f3ff; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #007bff;">
+            <h3 style="margin-top: 0; color: #007bff;">Academic Performance (Semesters 1-8)</h3>
+            <div style="font-size: 24px; font-weight: bold; color: #007bff;">CGPA: {{ cgpa }}</div>
+            <div style="font-size: 18px; color: #28a745; margin-top: 10px;">Percentage: {{ cgpa_percent }}%</div>
+            <div style="font-size: 12px; color: #666; margin-top: 10px; font-style: italic;">
+                Formula: CGPA = Σ(C × GP) / Σ C
+            </div>
+        </div>
+    {% endif %}
+
+    {% if data %}
+        <h3 style="color: #007bff; margin-top: 25px;">Individual Subject Marks</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Semester</th>
+                    <th>Subject Code</th>
+                    <th>Credits</th>
+                    <th>Grade Point</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] if row[1] != 'UNKNOWN' else 'N/A' }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>
+                        {% set grade = row[3] %}
+                        {% if grade >= 9.0 %}
+                            <span class="grade-excellent">{{ grade }}</span>
+                        {% elif grade >= 7.0 %}
+                            <span class="grade-good">{{ grade }}</span>
+                        {% elif grade >= 5.0 %}
+                            <span class="grade-average">{{ grade }}</span>
+                        {% else %}
+                            <span class="grade-poor">{{ grade }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="no-data">
+            <h3>No marks found</h3>
+            <p>Please enter a student enrollment number to view their academic records.</p>
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>

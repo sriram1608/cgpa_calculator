@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View All Students - Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h2, h3 {
+            margin-bottom: 15px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        .filters {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+        .filter-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .filter-group select, .filter-group button {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .filter-group button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .filter-group button:hover {
+            background-color: #0056b3;
+        }
+        .clear-btn {
+            background-color: #6c757d !important;
+        }
+        .clear-btn:hover {
+            background-color: #545b62 !important;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .cgpa-high {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .cgpa-medium {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .cgpa-low {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .student-count {
+            margin: 10px 0;
+            font-weight: bold;
+            color: #495057;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .no-students {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/dashboard" class="back-link">← Back to Admin Dashboard</a>
+    
+    <h2>All Students Overview</h2>
+    
+    <!-- Filters Section -->
+    <div class="filters">
+        <h3>Filter Students</h3>
+        <form method="POST">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="department">Department:</label>
+                    <select name="department" id="department">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept }}" {% if dept == selected_department %}selected{% endif %}>
+                                {{ dept }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="graduation_year">Graduation Year:</label>
+                    <select name="graduation_year" id="graduation_year">
+                        <option value="">All Years</option>
+                        {% for year in graduation_years %}
+                            <option value="{{ year }}" {% if year == selected_graduation %}selected{% endif %}>
+                                {{ year }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <button type="submit">Apply Filters</button>
+                    <a href="/admin/view_all" class="filter-group button clear-btn" style="text-decoration: none; text-align: center; display: block;">Clear Filters</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Results Section -->
+    <div class="student-count">
+        Total Students: {{ students|length }}
+        {% if selected_department or selected_graduation %}
+            (Filtered)
+        {% endif %}
+    </div>
+    
+    {% if students %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Register No.</th>
+                    <th>Department</th>
+                    <th>Graduation Year</th>
+                    <th>CGPA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student[0] }}</td>
+                        <td>{{ student[1] }}</td>
+                        <td>{{ student[3] }}</td>
+                        <td>{{ student[2] }}</td>
+                        <td>
+                            {% set cgpa = student[4] %}
+                            {% if cgpa >= 8.0 %}
+                                <span class="cgpa-high">{{ cgpa }}</span>
+                            {% elif cgpa >= 6.0 %}
+                                <span class="cgpa-medium">{{ cgpa }}</span>
+                            {% else %}
+                                <span class="cgpa-low">{{ cgpa }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="no-students">
+            <h3>No students found</h3>
+            <p>Try adjusting your filters or check if students are registered in the system.</p>
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>

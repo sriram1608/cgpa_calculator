@@ -3,45 +3,143 @@
 <head>
   <title>Signup</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    form { max-width: 500px; margin: auto; border: 1px solid #ccc; padding: 20px; border-radius: 10px; }
-    input { display: block; width: 100%; margin-bottom: 10px; padding: 8px; }
-    button { padding: 10px 20px; background-color: #28a745; color: white; border: none; }
-    label { font-weight: bold; margin-top: 10px; }
-    .note { font-size: 12px; color: gray; }
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f1f1f1;
+        padding: 20px;
+        margin: 0;
+    }
+    .container {
+        max-width: 550px;
+        margin: 30px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+    }
+    label {
+        font-weight: bold;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        display: block;
+        color: #333;
+    }
+    input[type="text"], input[type="password"] {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+        border-color: #28a745;
+        outline: none;
+        box-shadow: 0 0 5px rgba(40,167,69,0.3);
+    }
+    button {
+        padding: 15px 30px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        width: 100%;
+        margin-top: 20px;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #218838;
+    }
+    .note {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        font-style: italic;
+    }
+
+    /* Password field with eye icon */
+    .password-container {
+      position: relative;
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .password-container input {
+      width: 100%;
+      padding: 8px 40px 8px 8px;
+      margin-bottom: 0;
+      box-sizing: border-box;
+    }
+
+    .eye-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #666;
+      font-size: 18px;
+      user-select: none;
+    }
+
+    .eye-icon:hover {
+      color: #28a745;
+    }
   </style>
   <script>
     function togglePassword() {
-      var pass = document.getElementById("password");
-      if (pass.type === "password") {
-        pass.type = "text";
+      const passwordField = document.getElementById('password');
+      const eyeIcon = document.querySelector('.eye-icon');
+
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.textContent = '🙈';
       } else {
-        pass.type = "password";
+        passwordField.type = 'password';
+        eyeIcon.textContent = '👁️';
       }
     }
   </script>
 </head>
 <body>
-  <h2 align="center">Student Signup</h2>
-  <form method="POST">
-    <label>Email:</label>
-    <input type="email" name="email" placeholder="Enter your email" required>
-
+  <div class="container">
+    <h2>📝 Student Signup</h2>
+    <form method="POST">
     <label>Full Name:</label>
     <input type="text" name="name" placeholder="Enter your name" required>
 
+    <label>Register Number:</label>
+    <input type="text" name="enrollment" placeholder="Enter your register number" required>
+
     <label>Password:</label>
-    <input type="password" name="password" id="password" placeholder="Create a strong password" required>
-    <input type="checkbox" onclick="togglePassword()"> Show Password
+    <div class="password-container">
+      <input type="password" name="password" id="password" placeholder="Create a strong password" required>
+      <span class="eye-icon" onclick="togglePassword()">👁️</span>
+    </div>
     <p class="note">* Password must be at least 8 characters long, contain 1 capital letter and 1 special character.</p>
 
     <label>Department:</label>
-    <input type="text" name="department" placeholder="e.g. Computer Science" required>
+    <input type="text" name="department" placeholder="Enter full department name (e.g. Computer Science Engineering)" required>
+    <p class="note">* Please enter the complete department name</p>
 
     <label>Graduation Year:</label>
     <input type="text" name="graduation" placeholder="e.g. 2023 - 2027" required>
 
-    <button type="submit">Sign Up</button>
-  </form>
+    <button type="submit">✅ Sign Up</button>
+    </form>
+  </div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Enter Grades</title>
+    <title>Enter Grades with Subject Codes</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -82,12 +82,6 @@
             background-color: #007bff;
             color: white;
         }
-        hr {
-            border: none;
-            height: 1px;
-            background-color: #eee;
-            margin: 20px 0;
-        }
         #subjects {
             margin-top: 20px;
         }
@@ -106,16 +100,17 @@
         }
     </style>
     <script>
-        // Cache buster: 2024-12-19-v2
         function generateFields() {
             const count = document.getElementById("subject_count").value;
             const container = document.getElementById("subjects");
             container.innerHTML = "";
+            
             for (let i = 1; i <= count; i++) {
                 const subjectDiv = document.createElement('div');
                 subjectDiv.className = 'subject-group';
+                
                 subjectDiv.innerHTML = `
-                    <h4>Subject ${i}</h4>
+                    <h4>📚 Subject ${i}</h4>
                     <label class="field-label">Subject Code:</label>
                     <input type="text" name="subject_code_${i-1}" placeholder="Subject Code (e.g., CS101, MATH101)" required maxlength="10" style="text-transform: uppercase;">
                     <label class="field-label">Credits:</label>
@@ -123,6 +118,7 @@
                     <label class="field-label">Grade Point:</label>
                     <input type="number" name="grade_${i-1}" placeholder="Grade Point (0-10)" min="0" max="10" step="0.1" required>
                 `;
+                
                 container.appendChild(subjectDiv);
             }
         }
@@ -130,7 +126,7 @@
 </head>
 <body>
 <div class="container">
-    <h2>📝 Enter Grades with Subject Codes (v2.0)</h2>
+    <h2>📝 Enter Grades with Subject Codes</h2>
     <form method="post">
         <label class="field-label">Semester:</label>
         <input type="number" name="semester" placeholder="Semester (1-8)" required min="1" max="8" title="Enter semester number from 1 to 8">

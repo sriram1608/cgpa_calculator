@@ -3,29 +3,163 @@
 <head>
   <title>Login</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    form { max-width: 400px; margin: auto; border: 1px solid #ccc; padding: 20px; border-radius: 10px; }
-    input { display: block; width: 100%; margin-bottom: 10px; padding: 8px; }
-    button { padding: 10px 20px; background-color: #007bff; color: white; border: none; }
-    a { text-decoration: none; color: #007bff; font-size: 14px; }
-    .error { color: red; font-size: 14px; }
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f1f1f1;
+        padding: 20px;
+        margin: 0;
+    }
+    .container {
+        max-width: 450px;
+        margin: 50px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    .subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+    input[type="text"], input[type="password"] {
+        display: block;
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0,123,255,0.3);
+    }
+    button {
+        padding: 15px 30px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        width: 100%;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    .signup-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .signup-link a {
+        text-decoration: none;
+        color: #007bff;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .signup-link a:hover {
+        text-decoration: underline;
+    }
+    .error {
+        color: #dc3545;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+    }
+
+    /* Password field with eye icon */
+    .password-container {
+      position: relative;
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .password-container input {
+      width: 100%;
+      padding: 8px 40px 8px 8px;
+      margin-bottom: 0;
+      box-sizing: border-box;
+    }
+
+    .eye-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #666;
+      font-size: 18px;
+      user-select: none;
+    }
+
+    .eye-icon:hover {
+      color: #007bff;
+    }
   </style>
 </head>
 <body>
-  <h2 align="center">Student/Admin Login</h2>
-  <form method="POST" action="/login">
-    <label>Email:</label>
-    <input type="email" name="email" placeholder="Enter your email" required>
+  <div class="container">
+    <h2>🎓 Student/Admin Login</h2>
+    <p class="subtitle">Use your register number to login</p>
 
-    <label>Password:</label>
-    <input type="password" name="password" placeholder="Enter your password" required>
+    <form method="POST" action="/login">
+      <label>Register Number:</label>
+      <input type="text" name="enrollment" placeholder="Enter your register number" required>
 
-    <button type="submit">Login</button>
-    <p align="center"><a href="/signup">Don't have an account? Sign Up</a></p>
+      <label>Password:</label>
+      <div class="password-container">
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        <span class="eye-icon" onclick="togglePassword()">👁️</span>
+      </div>
 
-    {% if error %}
-      <p class="error">{{ error }}</p>
-    {% endif %}
-  </form>
+      <button type="submit">🔐 Login</button>
+
+      {% if error %}
+        <div class="error">{{ error }}</div>
+      {% endif %}
+    </form>
+
+    <div class="signup-link">
+      <a href="/signup">Don't have an account? Sign Up</a>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const passwordField = document.getElementById('password');
+      const eyeIcon = document.querySelector('.eye-icon');
+
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.textContent = '🙈';
+      } else {
+        passwordField.type = 'password';
+        eyeIcon.textContent = '👁️';
+      }
+    }
+  </script>
 </body>
 </html>
